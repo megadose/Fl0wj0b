@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-#Author : megadose
 from bs4 import BeautifulSoup
 import csv,argparse,json,requests,tabulate
 from lxml import html
@@ -111,12 +110,11 @@ def doublon(dictdata,dictdata2):
     for i in dictdata:
         try:
             tel = i['Telephone'].replace(" ","")
+            check = tel in str(dict_datafinal) in str(dict_datafinal)
+            if(check==False):
+                dict_datafinal.append(i)
         except:
-            print(i + "Error ")
-
-        check = tel in str(dict_datafinal) in str(dict_datafinal)
-        if(check==False):
-            dict_datafinal.append(i)
+            pass
     return(dict_datafinal)
 def export_csv(list,csv_file,csv_columns):
     #Export en csv

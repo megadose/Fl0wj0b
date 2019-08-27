@@ -7,7 +7,7 @@ Fl0wj0b est un script qui permet d'extraire des informations d'annuaires et de l
 ## 🛠️ Installation
 
 ```bash
-git clone https://github.com/megadose/Fl0wj0b/
+git clone https://github.com/megadose/Fl0wj0b.git
 pip3 install -r requirements.txt
 python3 Fl0wj0b.py
 ```

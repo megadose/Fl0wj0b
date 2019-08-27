@@ -1,5 +1,5 @@
 beautifulsoup4
-csv
+
 argparse
 json
 requests

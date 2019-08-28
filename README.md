@@ -20,6 +20,11 @@ python3 Fl0wj0b.py -q "pierre dubois" -o paris -e export.csv
 ```
 
 
+## 📚 Les annuaires utilisés
+- [Page Blanche](https://www.pagesjaunes.fr/pagesblanches)
+- [118 712](https://www.118712.fr/)
+- [118 000](https://www.118000.fr/)
+
 
 ## 📝 License
 [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.fr.html)

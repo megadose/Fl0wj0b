@@ -25,7 +25,7 @@ def annuaire118712(qui, ou):
         cp = p.find(itemprop="postalCode").string.strip()
         ville = p.find(itemprop="addressLocality").string.strip()
         tel = p.find(itemprop="telephone").string.strip()
-        result = dict(Nom=nom, cp=cp, ville=ville, tel=tel)
+        result = dict(Nom=nom, CodePostal=cp, Ville=ville, Telephone=tel.replace(" ",""))
         adresse = p.find(itemprop="streetAddress")
         if adresse is not None:
             result['adresse'] = adresse.string.strip()
@@ -51,7 +51,7 @@ def annuaire118712(qui, ou):
         if 'tel' not in result:
             tel = p.find(class_="hidden-phone")
             if tel is not None:
-                result['tel'] = tel['data-wording']
+                result['Telephone'] = tel['data-wording']
         add_if_not_none(result, 'categories', p.find(class_="categories"))
         res.append(result)
     return(res)
@@ -107,15 +107,14 @@ def doublon(dictdata,dictdata2):
     #compare les résultats avec  2 dictionnaire
     dict_datafinal = []
     dict_datafinal +=dictdata2
-    for i in dictdata:
-        try:
+    if(len(dictdata)>=1):
+        for i in dictdata:
             tel = i['Telephone'].replace(" ","")
             check = tel in str(dict_datafinal) in str(dict_datafinal)
             if(check==False):
                 dict_datafinal.append(i)
-        except:
-            pass
     return(dict_datafinal)
+
 def export_csv(list,csv_file,csv_columns):
     #Export en csv
     try:
@@ -134,11 +133,12 @@ dict_data3 = annu118000(args.qui, args.ou)
 dict_data_final = doublon(dict_data,dict_data2)
 dict_data_final = doublon(dict_data3,dict_data_final)
 
-header = dict_data_final[0].keys()
-rows =  [x.values() for x in dict_data_final]
+if(len(dict_data_final)>=1):
+    header = dict_data_final[0].keys()
+    rows =  [x.values() for x in dict_data_final]
 
-print(tabulate.tabulate(rows, header))
+    print(tabulate.tabulate(rows, header))
 
-if(args.export!=None):
-    csv_columns = ['Nom','CodePostal','Ville','Telephone','Adresse']
-    export_csv(dict_data_final,args.export,csv_columns)
+    if(args.export!=None):
+        csv_columns = ['Nom','CodePostal','Ville','Telephone','Adresse']
+        export_csv(dict_data_final,args.export,csv_columns)

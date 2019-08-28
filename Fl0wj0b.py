@@ -28,9 +28,9 @@ def annuaire118712(qui, ou):
         result = dict(Nom=nom, CodePostal=cp, Ville=ville, Telephone=tel.replace(" ",""))
         adresse = p.find(itemprop="streetAddress")
         if adresse is not None:
-            result['adresse'] = adresse.string.strip()
+            result['Adresse'] = adresse.string.strip()
         else:
-            result['adresse'] = ''
+            result['Adresse'] = ''
         lat = p.find(itemprop="latitude")
         if lat is not None:
             result['lat'] = lat.string.strip()

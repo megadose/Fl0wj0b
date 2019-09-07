@@ -9,11 +9,34 @@ parser.add_argument('-e', '--export',help = "exporter les resultats en .csv")
 
 args = parser.parse_args()
 
+check_pageblanche,check_annuaire118712,check_annu118000 =0,0,0
 
 def add_if_not_none(the_dict, key, item):
     if item is not None:
         the_dict[key] = item.string.strip()
 
+def doublon(dictdata,dictdata2):
+    #compare les résultats avec  2 dictionnaire
+    dict_datafinal = []
+    dict_datafinal +=dictdata2
+    if(len(dictdata)>=1):
+        for i in dictdata:
+            tel = i['Telephone']
+            check = tel in str(dict_datafinal) in str(dict_datafinal)
+            if(check==False):
+                dict_datafinal.append(i)
+    return(dict_datafinal)
+
+def export_csv(list,csv_file,csv_columns):
+    #Export en csv
+    try:
+        with open(csv_file, 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+            writer.writeheader()
+            for data in dict_data_final:
+                writer.writerow(data)
+    except IOError:
+        print("I/O error")
 
 def annuaire118712(qui, ou):
     # recherche sur l'annuaire d'Orange
@@ -53,15 +76,15 @@ def annuaire118712(qui, ou):
             if tel is not None:
                 result['Telephone'] = tel['data-wording']
         add_if_not_none(result, 'categories', p.find(class_="categories"))
+        result['Telephone'] = str(result['Telephone']).replace(" ","")
         res.append(result)
     return(res)
-
 
 def page_blanche(qui, ou):
     # recherche sur page blanche
     res = []
     headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3831.0 Safari/537.36 Edg/77.0.200.1'    }
+      'User-Agent': 'Mozilla/5.0 (fens NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3831.0 Safari/537.36 Edg/77.0.200.1'    }
     req = requests.post('https://www.pagesjaunes.fr/pagesblanches/recherche',
                        params={'quoiqui': qui,'ou':ou,'proximite':"0"},headers=headers)
     tree = html.fromstring(req.text)
@@ -80,8 +103,8 @@ def page_blanche(qui, ou):
             adresse = "Cet abonné ne désire pas publier son adresse."
         result = dict(Nom=name[0].replace("\n",""))
         result['Adresse'] = adresse.replace("\n","")
-        result['Ville'] = ville
         result['CodePostal'] = cp
+        result['Ville'] = ville
         result['Telephone'] = ' / '.join(phone).replace(" ","")
         res.append(result)
     return(res)
@@ -99,33 +122,8 @@ def annu118000(qui, ou):
             j = json.loads(b['data-info'])
             res.append(dict(Nom=p.h2.a.string, Adresse=j['address'],
                             CodePostal=j['cp'], Ville=j['city'], Telephone=j['tel']))
+
     return(res)
-
-
-
-def doublon(dictdata,dictdata2):
-    #compare les résultats avec  2 dictionnaire
-    dict_datafinal = []
-    dict_datafinal +=dictdata2
-    if(len(dictdata)>=1):
-        for i in dictdata:
-            tel = i['Telephone'].replace(" ","")
-            check = tel in str(dict_datafinal) in str(dict_datafinal)
-            if(check==False):
-                dict_datafinal.append(i)
-    return(dict_datafinal)
-
-def export_csv(list,csv_file,csv_columns):
-    #Export en csv
-    try:
-        with open(csv_file, 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-            writer.writeheader()
-            for data in dict_data_final:
-                writer.writerow(data)
-    except IOError:
-        print("I/O error")
-
 
 dict_data = annuaire118712(args.qui, args.ou)
 dict_data2 = page_blanche(args.qui, args.ou)

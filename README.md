@@ -1,7 +1,7 @@
 # Fl0wj0b
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 
-Fl0wj0b est un script qui permet d'extraire des informations d'annuaires et de les exporter .csv
+Fl0wj0b est un script qui permet d'extraire des informations d'annuaires et de les exporter en csv
 ## 💡 Prérequis
    [Python 3.x](https://www.python.org/downloads/release/python-370/)
 ## 🛠️ Installation

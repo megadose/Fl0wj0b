@@ -54,6 +54,7 @@ def annuaire118712(qui, ou):
             result['Adresse'] = adresse.string.strip()
         else:
             result['Adresse'] = ''
+
         lat = p.find(itemprop="latitude")
         if lat is not None:
             result['lat'] = lat.string.strip()
@@ -67,10 +68,10 @@ def annuaire118712(qui, ou):
     for p in h.find_all(itemtype="http://schema.org/LocalBusiness"):
         nom = p.find(itemprop="name").a.string.strip()
         result = dict(Nom=nom)
-        add_if_not_none(result, 'Adresse', p.find(itemprop="streetAddress"))
-        add_if_not_none(result, 'CodePostal', p.find(itemprop="postalCode"))
-        add_if_not_none(result, 'Ville', p.find(itemprop="addressLocality"))
-        add_if_not_none(result, 'Telephone', p.find(itemprop="telephone"))
+        add_if_not_none(result, 'Adresse', p.find(itemprop="postalCode"))
+        add_if_not_none(result, 'CodePostal', p.find(itemprop="addressLocality"))
+        add_if_not_none(result, 'Ville', p.find(itemprop="telephone"))
+        add_if_not_none(result, 'Telephone', p.find(itemprop="streetAddress"))
         if 'tel' not in result:
             tel = p.find(class_="hidden-phone")
             if tel is not None:

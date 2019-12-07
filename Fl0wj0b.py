@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+# coding: utf-8
 from bs4 import BeautifulSoup
 import csv,argparse,json,requests,tabulate
 from lxml import html
@@ -9,7 +9,6 @@ parser.add_argument('-e', '--export',help = "exporter les resultats en .csv")
 
 args = parser.parse_args()
 
-check_pageblanche,check_annuaire118712,check_annu118000 =0,0,0
 
 def add_if_not_none(the_dict, key, item):
     if item is not None:
@@ -68,10 +67,10 @@ def annuaire118712(qui, ou):
     for p in h.find_all(itemtype="http://schema.org/LocalBusiness"):
         nom = p.find(itemprop="name").a.string.strip()
         result = dict(Nom=nom)
-        add_if_not_none(result, 'Adresse', p.find(itemprop="postalCode"))
-        add_if_not_none(result, 'CodePostal', p.find(itemprop="addressLocality"))
-        add_if_not_none(result, 'Ville', p.find(itemprop="telephone"))
-        add_if_not_none(result, 'Telephone', p.find(itemprop="streetAddress"))
+        add_if_not_none(result, 'Adresse', p.find(itemprop="streetAddress"))
+        add_if_not_none(result, 'CodePostal', p.find(itemprop="postalCode"))
+        add_if_not_none(result, 'Ville', p.find(itemprop="addressLocality"))
+        add_if_not_none(result, 'Telephone', p.find(itemprop="telephone"))
         if 'tel' not in result:
             tel = p.find(class_="hidden-phone")
             if tel is not None:

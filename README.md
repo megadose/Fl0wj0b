@@ -3,20 +3,20 @@
 
 Fl0wj0b est un script qui permet d'extraire des informations d'annuaires et de les exporter en csv
 ## 💡 Prérequis
-   [Python 3.x](https://www.python.org/downloads/release/python-370/)
+   [Python](https://www.python.org/downloads/release/python-370/)
 ## 🛠️ Installation
 
 ```bash
 git clone https://github.com/megadose/Fl0wj0b.git
 cd Fl0wj0b/
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## 📈 Usage
 
 ```bash
-python3 Fl0wj0b.py [-h] -q QUI -o OU [-e EXPORT]
-python3 Fl0wj0b.py -q "pierre dubois" -o paris -e export.csv
+python Fl0wj0b.py [-h] -q QUI -o OU [-e EXPORT]
+python Fl0wj0b.py -q "pierre dubois" -o paris -e export.csv
 ```
 
 

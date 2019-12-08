@@ -18,16 +18,16 @@ def doublon(dictdata,dictdata2):
     #compare les résultats avec  2 dictionnaire
     dict_datafinal = []
     for i in dictdata2:
-        dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'],CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
+        dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'].lower().replace(",",""),CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
     if dictdata is not None:
         for i in dictdata:
             if i['Telephone'] != "":
                 tel = i['Telephone']
                 check = tel in str(dict_datafinal) in str(dict_datafinal)
             else:
-                dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'],CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
+                dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'].lower().replace(",",""),CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
             if(check==False):
-                dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'],CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
+                dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'].lower().replace(",",""),CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
     else :
         pass
 

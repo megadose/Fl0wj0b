@@ -17,13 +17,20 @@ def add_if_not_none(the_dict, key, item):
 def doublon(dictdata,dictdata2):
     #compare les résultats avec  2 dictionnaire
     dict_datafinal = []
-    dict_datafinal +=dictdata2
-    if(len(dictdata)>=1):
+    for i in dictdata2:
+        dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'],CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
+    if dictdata is not None:
         for i in dictdata:
-            tel = i['Telephone']
-            check = tel in str(dict_datafinal) in str(dict_datafinal)
+            if i['Telephone'] != "":
+                tel = i['Telephone']
+                check = tel in str(dict_datafinal) in str(dict_datafinal)
+            else:
+                dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'],CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
             if(check==False):
-                dict_datafinal.append(i)
+                dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'],CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
+    else :
+        pass
+
     return(dict_datafinal)
 
 def export_csv(list,csv_file,csv_columns):
@@ -64,27 +71,48 @@ def annuaire118712(qui, ou):
         if categories is not None:
             result['categories'] = categories.string.strip()
         res.append(result)
+
     for p in h.find_all(itemtype="http://schema.org/LocalBusiness"):
         nom = p.find(itemprop="name").a.string.strip()
-        result = dict(Nom=nom)
-        add_if_not_none(result, 'Adresse', p.find(itemprop="streetAddress"))
-        add_if_not_none(result, 'CodePostal', p.find(itemprop="postalCode"))
-        add_if_not_none(result, 'Ville', p.find(itemprop="addressLocality"))
-        add_if_not_none(result, 'Telephone', p.find(itemprop="telephone"))
-        if 'tel' not in result:
-            tel = p.find(class_="hidden-phone")
-            if tel is not None:
-                result['Telephone'] = tel['data-wording']
-        add_if_not_none(result, 'categories', p.find(class_="categories"))
-        result['Telephone'] = str(result['Telephone']).replace(" ","")
+        cp = p.find(itemprop="postalCode").string.strip()
+        ville = p.find(itemprop="addressLocality").string.strip()
+        tel = p.find(itemprop="telephone").string.strip()
+        result = dict(Nom=nom, CodePostal=cp, Ville=ville, Telephone=tel.replace(" ",""))
+        adresse = p.find(itemprop="streetAddress")
+        if adresse is not None:
+            result['Adresse'] = adresse.string.strip()
+        else:
+            result['Adresse'] = ''
+
+        lat = p.find(itemprop="latitude")
+        if lat is not None:
+            result['lat'] = lat.string.strip()
+        lon = p.find(itemprop="longitude")
+        if lon is not None:
+            result['lon'] = lon.string.strip()
+        categories = p.find(class_="categories")
+        if categories is not None:
+            result['categories'] = categories.string.strip()
         res.append(result)
+
     return(res)
 
 def page_blanche(qui, ou):
     # recherche sur page blanche
     res = []
     headers = {
-      'User-Agent': 'Mozilla/5.0 (fens NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3831.0 Safari/537.36 Edg/77.0.200.1'    }
+    'User-Agent': 'Mozilla/5.0 (fens NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3831.0 Safari/537.36 Edg/77.0.200.1',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Origin': 'https://www.pagesjaunes.fr',
+    'DNT': '1',
+    'Connection': 'keep-alive',
+    'Referer': 'https://www.pagesjaunes.fr/pagesblanches',
+    'Upgrade-Insecure-Requests': '1',
+    'TE': 'Trailers',
+    }
+
     req = requests.post('https://www.pagesjaunes.fr/pagesblanches/recherche',
                        params={'quoiqui': qui,'ou':ou,'proximite':"0"},headers=headers)
     tree = html.fromstring(req.text)
@@ -120,17 +148,24 @@ def annu118000(qui, ou):
         b = p.find(class_="iconheart")
         if b['data-info'] is not None:
             j = json.loads(b['data-info'])
+            if j['tel'] != j['mainLine']:
+                tel = str(j['tel'])+"/"+str(j['mainLine'])
+            else:
+                tel = j['mainLine']
             res.append(dict(Nom=p.h2.a.string, Adresse=j['address'],
-                            CodePostal=j['cp'], Ville=j['city'], Telephone=j['tel']))
+                            CodePostal=j['cp'], Ville=j['city'], Telephone=tel))
 
     return(res)
 
 dict_data = annuaire118712(args.qui, args.ou)
+#print(dict_data)
 dict_data2 = page_blanche(args.qui, args.ou)
+#print(dict_data2)
 dict_data3 = annu118000(args.qui, args.ou)
-dict_data_final = doublon(dict_data,dict_data2)
+#print(dict_data3)
+dict_data_final = doublon(dict_data2,dict_data)
 dict_data_final = doublon(dict_data3,dict_data_final)
-
+#print(dict_data_final)
 if(len(dict_data_final)>=1):
     header = dict_data_final[0].keys()
     rows =  [x.values() for x in dict_data_final]
@@ -138,5 +173,5 @@ if(len(dict_data_final)>=1):
     print(tabulate.tabulate(rows, header))
 
     if(args.export!=None):
-        csv_columns = ['Nom','CodePostal','Ville','Telephone','Adresse']
+        csv_columns = ['Nom','Adresse','CodePostal','Ville','Telephone']
         export_csv(dict_data_final,args.export,csv_columns)

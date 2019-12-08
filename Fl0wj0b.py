@@ -25,7 +25,7 @@ def doublon(dictdata,dictdata2):
                 tel = i['Telephone']
                 check = tel in str(dict_datafinal) in str(dict_datafinal)
             else:
-                dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'].lower().replace(",",""),CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
+                dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'].lower().replace(",",""),CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i["Nom"]+" ne désire pas publier son numéro de téléphone."))
             if(check==False):
                 dict_datafinal.append(dict(Nom=i["Nom"], Adresse=i['Adresse'].lower().replace(",",""),CodePostal=i['CodePostal'], Ville=i['Ville'], Telephone=i['Telephone']))
     else :
